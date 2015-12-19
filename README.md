@@ -8,9 +8,11 @@
 4. docker-compose build && docker-compose up
 5. Thats it!
 
-For Jira, go to http://localhost:50000
-For Bamboo, go to http://localhost:50001
-For Stash, go to http://localhost:50002
+For *Jira*, go to http://localhost:50000
+
+For *Bamboo*, go to http://localhost:50001
+
+For *Stash*, go to http://localhost:50002
 
 
 

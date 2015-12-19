@@ -1,0 +1,71 @@
+jira:
+        image: cptactionhank/atlassian-jira-software
+        ports:
+                - "50000:8080"
+        volumes_from:
+                - data
+        links:
+                - postgres-jira
+bamboo:
+        build: ./bamboo-server
+        ports:
+                - "50001:8085"
+        environment:
+                BAMBOO_HOME: /var/atlassian/bamboo
+        volumes_from:
+                - data
+        volumes:
+                - /var/run/docker.sock:/var/run/docker.sock
+                - /bin/docker:bin/docker
+                - /usr/lib/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
+                - ~/.docker/config.json:/root/.docker/config.json
+        links:
+                - postgres-bamboo
+stash:
+        image: cptactionhank/atlassian-stash
+        ports:
+                - "50002:7990"
+                - "7999:7999"
+        user: root
+        volumes_from:
+                - data
+        links:
+                - postgres-stash
+postgres-jira:
+        image: postgres:9.4
+        environment:
+                POSTGRES_PASSWORD: pw
+                POSTGRES_USER: jira
+                POSTGRES_DB: jira
+                PGDATA: /var/lib/postgresql/data/jira
+        volumes_from:
+                - data
+postgres-bamboo:
+        image: postgres:9.4
+        environment:
+                POSTGRES_PASSWORD: pw
+                POSTGRES_USER: bamboo
+                POSTGRES_DB: bamboo
+                PGDATA: /var/lib/postgresql/data/bamboo
+        volumes_from:
+                - data
+postgres-stash:
+        image: postgres:9.4
+        environment:
+                POSTGRES_PASSWORD: pw
+                POSTGRES_USER: stash
+                POSTGRES_DB: stash
+                PGDATA: /var/lib/postgresql/data/stash
+        volumes_from:
+                - data
+data:
+        command: /bin/echo "Atlassian Data Container"
+        image: cptactionhank/atlassian-jira
+        volumes:
+                - /var/atlassian/jira
+                - /var/atlassian/bamboo
+                - /var/atlassian/stash
+                - /var/lib/postgresql/data
+        
+        
+

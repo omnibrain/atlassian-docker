@@ -12,15 +12,13 @@ bamboo:
                 - "50001:8085"
         environment:
                 BAMBOO_HOME: /var/atlassian/bamboo
+                DOCKER_HOST: tcp://docker-dind:2375
+                HOME: /root
         volumes_from:
                 - data
-        volumes:
-                - /var/run/docker.sock:/var/run/docker.sock
-                - /bin/docker:bin/docker
-                - /usr/lib/libdevmapper.so.1.02:/usr/lib/libdevmapper.so.1.02
-                - ~/.docker/config.json:/root/.docker/config.json
         links:
                 - postgres-bamboo
+                - docker-dind
 stash:
         image: cptactionhank/atlassian-stash
         ports:
@@ -31,6 +29,15 @@ stash:
                 - data
         links:
                 - postgres-stash
+docker-dind:
+        image: docker:1.9.1-dind
+        privileged: true
+        volumes_from:
+                - data
+        volumes:
+                - ~/.docker:/root/.docker
+        command: "--insecure-registry lustigsbusi.ch:5000"
+
 postgres-jira:
         image: postgres:9.4
         environment:
@@ -66,6 +73,7 @@ data:
                 - /var/atlassian/bamboo
                 - /var/atlassian/stash
                 - /var/lib/postgresql/data
+                - /var/lib/docker
         
         
 
